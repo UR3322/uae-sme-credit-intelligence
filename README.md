@@ -77,11 +77,11 @@
 git clone (https://github.com/ur3322/uae-sme-credit-intelligence.git)
 cd uae-sme-credit-intelligence
 
-**2. Run with Docker**
+2. Run with Docker
 
 docker-compose up --build
 
-**3. Run Service Locally (Alternative)**
+3. Run Service Locally (Alternative)
 
 # Terminal 1: ML Microservice
 cd ml-service
