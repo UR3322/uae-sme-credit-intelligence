@@ -1,0 +1,20 @@
+# Environment Variables & Keys
+.env
+*.env.local
+
+# Node Dependencies & Build Output
+node_modules/
+dist/
+build/
+
+# Python Cache & Virtual Environments
+__pycache__/
+*.pyc
+venv/
+.venv/
+.pytest_cache/
+
+# IDE & OS Junk
+.vscode/
+.DS_Store
+Thumbs.db
