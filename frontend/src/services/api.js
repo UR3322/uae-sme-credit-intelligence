@@ -1,17 +1,22 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  timeout: 15000,
 });
 
-// Attach JWT token from localStorage to every outbound request
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
-}, (error) => {
+});
+
+API.interceptors.response.use((response) => response, (error) => {
+  if (error.response?.status === 401 && !error.config?.url?.includes('/auth/login')) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.assign('/login');
+  }
   return Promise.reject(error);
 });
 

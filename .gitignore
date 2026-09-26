@@ -1,20 +1,26 @@
-# Environment Variables & Keys
+# Secrets and local environment
 .env
-*.env.local
+.env.*
+!.env.example
+*.pem
+*.key
 
-# Node Dependencies & Build Output
+# Node dependencies/build output
 node_modules/
 dist/
 build/
 
-# Python Cache & Virtual Environments
+# Python caches/virtual environments
 __pycache__/
-*.pyc
+*.py[cod]
 venv/
 .venv/
 .pytest_cache/
 
-# IDE & OS Junk
+# Local ML outputs/data (checked-in demo assets remain tracked)
+*.joblib.tmp
+
+# IDE/OS noise
 .vscode/
 .DS_Store
 Thumbs.db
