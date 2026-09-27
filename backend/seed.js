@@ -41,11 +41,26 @@ async function seedDatabase() {
     `, [company.rows[0].company_id]);
     if (!application.rows.length) {
       application = await client.query(`
-        INSERT INTO applications (company_id, requested_amount, requested_tenure_months, facility_purpose, status)
-        VALUES ($1, 500000, 36, 'Working Capital Expansion', 'SUBMITTED')
+        INSERT INTO applications (company_id, requested_amount, requested_tenure_months, facility_purpose, status,
+          annual_revenue, net_profit_margin, net_profit, current_ratio, debt_to_equity,
+          avg_monthly_inflow, avg_monthly_outflow, negative_cf_months, cfs_score,
+          late_payments_12m, monthly_debt_service, dsr)
+        VALUES ($1, 500000, 36, 'Working Capital Expansion', 'SUBMITTED',
+          4800000, 0.12, 576000, 1.45, 1.85,
+          400000, 352000, 1, 78.5,
+          0, 32000, 8)
         RETURNING application_id
       `, [company.rows[0].company_id]);
     }
+    await client.query(`
+      UPDATE applications
+      SET annual_revenue = 4800000, net_profit_margin = 0.12, net_profit = 576000,
+          current_ratio = 1.45, debt_to_equity = 1.85,
+          avg_monthly_inflow = 400000, avg_monthly_outflow = 352000,
+          negative_cf_months = 1, cfs_score = 78.5,
+          late_payments_12m = 0, monthly_debt_service = 32000, dsr = 8
+      WHERE application_id = $1
+    `, [application.rows[0].application_id]);
     await client.query(`
       INSERT INTO model_assessments (application_id, model_version, probability_of_default, risk_score, risk_category, supported_amount, shap_explanation)
       VALUES ($1, 'synthetic-demo-v1', 0.0780, 8, 'MEDIUM', 450000.00, $2::jsonb)

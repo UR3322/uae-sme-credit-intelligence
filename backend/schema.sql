@@ -26,6 +26,18 @@ CREATE TABLE IF NOT EXISTS applications (
   requested_tenure_months INTEGER NOT NULL CHECK (requested_tenure_months BETWEEN 1 AND 120),
   facility_purpose TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'SUBMITTED' CHECK (status IN ('SUBMITTED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED', 'REFERRED', 'INFO_REQUESTED')),
+  annual_revenue NUMERIC(16,2) NOT NULL,
+  net_profit_margin NUMERIC(8,4) NOT NULL,
+  net_profit NUMERIC(16,2) NOT NULL,
+  current_ratio NUMERIC(8,2) NOT NULL,
+  debt_to_equity NUMERIC(8,2) NOT NULL,
+  avg_monthly_inflow NUMERIC(16,2) NOT NULL,
+  avg_monthly_outflow NUMERIC(16,2) NOT NULL,
+  negative_cf_months INTEGER NOT NULL CHECK (negative_cf_months >= 0),
+  cfs_score NUMERIC(8,2) NOT NULL,
+  late_payments_12m INTEGER NOT NULL CHECK (late_payments_12m >= 0),
+  monthly_debt_service NUMERIC(16,2) NOT NULL,
+  dsr NUMERIC(8,2) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

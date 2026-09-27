@@ -37,7 +37,8 @@ def generate_data(n_samples=10000, seed=42):
     avg_monthly_outflow = avg_monthly_inflow * (1.0 - net_profit_margin)
     negative_cf_months = np.clip(np.random.poisson(lam=0.6, size=n_samples), 0, 6)
     
-    cfs_score = np.clip(100.0 - ((avg_monthly_inflow * 0.2 / avg_monthly_inflow) * 50.0 + (negative_cf_months * 10.0)), 0.0, 100.0)
+    cf_ratio = avg_monthly_outflow / avg_monthly_inflow
+    cfs_score = np.clip(100.0 - (negative_cf_months * 12.0) - np.maximum(0.0, cf_ratio - 0.80) * 150.0 + np.random.normal(0, 4, size=n_samples), 0.0, 100.0)
     late_payments_12m = np.clip(np.random.poisson(lam=0.8, size=n_samples), 0, 12)
     monthly_debt_service = (avg_monthly_inflow * 0.15) * (debt_to_equity / 1.8) * np.random.uniform(0.7, 1.3, size=n_samples)
     dsr = (monthly_debt_service / avg_monthly_inflow) * 100.0

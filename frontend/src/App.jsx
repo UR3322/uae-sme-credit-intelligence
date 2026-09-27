@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar';
 const Login = lazy(() => import('./pages/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const ApplicationList = lazy(() => import('./pages/ApplicationList'));
+const NewApplication = lazy(() => import('./pages/NewApplication'));
 const AnalystWorkspace = lazy(() => import('./pages/AnalystWorkspace'));
 
 function readUser() {
@@ -37,6 +38,7 @@ export default function App() {
             <div className="flex flex-1"><Sidebar /><main className="flex-1"><Suspense fallback={<div className="p-8 text-center" role="status">Loading page…</div>}><Routes>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/applications" element={<ApplicationList />} />
+              <Route path="/applications/new" element={<NewApplication />} />
               <Route path="/applications/:id" element={<AnalystWorkspace user={user} />} />
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes></Suspense></main></div>

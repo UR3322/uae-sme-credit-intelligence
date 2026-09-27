@@ -37,8 +37,8 @@
 1. **Deterministic Financial Ratio Engine:**
    - Calculates Liquidity (Current Ratio), Leverage ($D/E$), Debt Service Ratio ($DSR$), and a custom **Cash Flow Stability Index ($CFS$)**.
 2. **Machine Learning Risk Model (XGBoost):**
-   - Trained on 50,000 synthetic SME records across all 7 UAE Emirates and 9 economic sectors.
-   - Evaluated against a Logistic Regression baseline (**ROC-AUC: 0.9615 vs 0.8842**, **PR-AUC: 0.8430 vs 0.6210**).
+   - Trained on 10,000 synthetic SME records (regenerable to 50,000) across all 7 UAE Emirates and 9 economic sectors.
+   - Evaluated against a Logistic Regression baseline on a held-out test set — see **Performance Benchmark** below for the honest numbers from the current artifacts.
 3. **Explainable AI (TreeSHAP):**
    - Decomposes every individual credit score into exact positive (risk-elevating) and negative (risk-mitigating) feature contributions.
    - Generates natural-language risk narratives for human credit officers in compliance with CBUAE AI transparency guidance.
@@ -51,14 +51,27 @@
 
 ## Performance Benchmark
 
-| Performance Metric | Baseline: Logistic Regression | Main Model: XGBoost Classifier | Delta / Improvement |
-| :--- | :---: | :---: | :---: |
-| **ROC-AUC** | $0.8842$ | **$0.9615$** | $+7.73\%$ |
-| **PR-AUC** | $0.6210$ | **$0.8430$** | $+22.20\%$ |
-| **Precision** ($\text{Threshold} = 0.50$) | $0.4125$ | **$0.7214$** | $+30.89\%$ |
-| **Recall** ($\text{Threshold} = 0.50$) | $0.8410$ | **$0.8952$** | $+5.42\%$ |
-| **F1-Score** | $0.5534$ | **$0.7990$** | $+24.56\%$ |
-| **Brier Score (Calibration)** | $0.0912$ | **$0.0241$** | $-0.0671$ (Better) |
+Measured on a held-out 20% test split (seed 42) against the shipped artifacts (`xgboost_model.pkl`, `preprocessor.pkl`).
+Regenerate with the training script, then evaluate — see `ml-service/train_local_artifacts.py`.
+
+| Performance Metric | Baseline: Logistic Regression | Main Model: XGBoost Classifier |
+| :--- | :---: | :---: |
+| **ROC-AUC** | $0.8316$ | $0.7942$ |
+| **PR-AUC** | $0.3198$ | $0.2230$ |
+| **Precision** ($\text{Threshold} = 0.50$) | $0.5714$ | $0.1855$ |
+| **Recall** ($\text{Threshold} = 0.50$) | $0.0714$ | $0.6161$ |
+| **F1-Score** | $0.1270$ | $0.2851$ |
+| **Brier Score (Calibration)** | $0.0449$ | $0.1206$ |
+
+> **Note on honesty:** an earlier version of this table reported ROC-AUC 0.9615 for XGBoost. That number came from a
+> training run where the `cfs_score` feature was degenerate (near-constant), which leaked an artificially easy signal.
+> After fixing the feature generator, the benchmark was re-run from scratch and the numbers above are what the
+> current model actually achieves. The baseline is competitive on this synthetic data — hyperparameter tuning against
+> the fixed feature set is a tracked next step. The project's value is the explainability and governance loop, not
+> beating a baseline on synthetic data.
+
+### Training Pipeline Diagnostics
+![Data and model pipeline diagnostics](ml-service/data_model_pipeline_diagnostics.png)
 
 ---
 
@@ -74,15 +87,24 @@
 
 ### 1. Clone & Setup Environment
 ```bash
-git clone (https://github.com/ur3322/uae-sme-credit-intelligence.git)
+git clone https://github.com/UR3322/uae-sme-credit-intelligence.git
 cd uae-sme-credit-intelligence
+cp .env.example .env
+# Edit .env and replace every placeholder value before running.
+```
 
-2. Run with Docker
-
+### 2. Run with Docker
+```bash
 docker-compose up --build
+```
 
-3. Run Service Locally (Alternative)
+Seed the demo workspace (demo users + sample application):
+```bash
+docker-compose --profile demo-seed run --rm demo-seed
+```
 
+### 3. Run Services Locally (Alternative)
+```bash
 # Terminal 1: ML Microservice
 cd ml-service
 python -m uvicorn main:app --reload --port 8000
@@ -94,3 +116,4 @@ npm run dev
 # Terminal 3: React Frontend
 cd frontend
 npm run dev
+```

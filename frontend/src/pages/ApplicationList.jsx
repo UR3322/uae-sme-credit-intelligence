@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Plus } from 'lucide-react';
 import API from '../services/api';
 
 export default function ApplicationList() {
@@ -20,9 +20,14 @@ export default function ApplicationList() {
 
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-slate-900">SME Application Queue</h1>
-        <p className="text-xs text-slate-500">Applications awaiting analyst review</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900">SME Application Queue</h1>
+          <p className="text-xs text-slate-500">Applications awaiting analyst review</p>
+        </div>
+        <button onClick={() => navigate('/applications/new')} className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-sm">
+          <Plus className="w-4 h-4" /> New Application
+        </button>
       </div>
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
         {loading ? <p className="p-6 text-sm text-slate-500" role="status">Loading applications…</p> : null}
