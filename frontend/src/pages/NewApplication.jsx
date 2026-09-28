@@ -46,8 +46,6 @@ export default function NewApplication() {
       if (!String(f[key]).trim()) return `${label} is required.`;
     }
     const positive = [
-      ['business_age_years', 'Business age'],
-      ['employee_count', 'Employee count'],
       ['annual_revenue', 'Annual revenue'],
       ['current_ratio', 'Current ratio'],
       ['debt_to_equity', 'Debt to equity'],
@@ -57,6 +55,14 @@ export default function NewApplication() {
     for (const [key, label] of positive) {
       const v = Number(f[key]);
       if (f[key] === '' || !Number.isFinite(v) || v <= 0) return `${label} must be a positive number.`;
+    }
+    const wholePositive = [
+      ['business_age_years', 'Business age'],
+      ['employee_count', 'Employee count'],
+    ];
+    for (const [key, label] of wholePositive) {
+      const v = Number(f[key]);
+      if (f[key] === '' || !Number.isFinite(v) || !Number.isInteger(v) || v <= 0) return `${label} must be a whole number greater than 0.`;
     }
     const nonNegativeInts = [
       ['late_payments_12m', 'Late payments (12m)'],
@@ -143,7 +149,7 @@ export default function NewApplication() {
               </select>
             </Field>
             <Field label="Business Age (Years) *" htmlFor="business_age_years">
-              <input id="business_age_years" type="number" min="0.01" step="0.5" required value={form.business_age_years} onChange={set('business_age_years')} className={inputCls} />
+              <input id="business_age_years" type="number" min="0" step="1" required value={form.business_age_years} onChange={set('business_age_years')} className={inputCls} />
             </Field>
             <Field label="Employee Count *" htmlFor="employee_count">
               <input id="employee_count" type="number" min="1" step="1" required value={form.employee_count} onChange={set('employee_count')} className={inputCls} />
